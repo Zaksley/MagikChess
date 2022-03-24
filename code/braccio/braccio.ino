@@ -24,9 +24,6 @@ Servo wrist_ver;
 Servo gripper;
 
 
-int openGripper = 0;
-int closedGripper = 180; 
-
 
 int Vstep_base;
 int Vstep_shoulder;
@@ -35,6 +32,7 @@ int Vstep_wrist_rot;
 int Vstep_wrist_ver;
 int Vstep_gripper;
 
+int longDelay; 
 
 void setup() {  
   //Initialization functions and set up the initial position for Braccio
@@ -55,34 +53,88 @@ void setup() {
   Vstep_wrist_ver = 170;
   Vstep_wrist_rot = 0;
   Vstep_gripper = 73;
+
+  longDelay = 30; 
  
-  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper); 
+  //Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper); 
 
-  Vstep_base = 140;
+  // Place le braccio à l'angle 270 pour notre repère 
+  Vstep_base = 30;
   Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+  
+  
+  pointSky(); 
 
-  Vstep_wrist_ver = 90;
-  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+  grab(); 
+  
 
-  Vstep_shoulder = 100; 
-  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-
-  Vstep_elbow = 180; 
-  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-
-  /*
-  Vstep_wrist_ver = 180;
-  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-  */
 
   take(); 
+
+  delay(1000);
+
+  getBack(); 
+  
 
 }
 
 void take() {
   
-  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, 10); 
-  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, 73); 
+  openGripper(); 
+  closeGripper(); 
+}
+
+void getBack()
+{
+  Vstep_elbow = 90;
+  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+  Vstep_shoulder = 90; 
+  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+  
+}
+
+void pointSky() 
+{
+  Vstep_wrist_ver = 90;
+  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+
+  Vstep_elbow = 90;
+  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+  
+  Vstep_shoulder = 90; 
+  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+  
+  Vstep_wrist_rot = 90;
+  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+
+  openGripper(); 
+}
+
+void openGripper() 
+{
+  Vstep_gripper = 10; 
+  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+ 
+}
+
+void closeGripper()
+{
+  Vstep_gripper = 60; 
+  Braccio.ServoMovement(20, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+}
+
+void grab()
+{
+  Vstep_wrist_ver = 180;
+  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+  
+  Vstep_elbow = 177; 
+  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+
+  
+  Vstep_shoulder = 85; 
+  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+  
 }
 
 void loop() {
