@@ -155,8 +155,8 @@ void setup() {
   x_cases[6] = 268; 
   y_cases[6] = 178; 
 
-  x_cases[7] = 268; 
-  y_cases[7] = 174; 
+  x_cases[7] = 272; 
+  y_cases[7] = 169; 
 
   x_cases[8] = 191; 
   y_cases[8] = 287; 
@@ -171,7 +171,14 @@ void setup() {
   y_cases[11] = 196;
 
 
-  grabPiece(2, 1); 
+
+    grabPiece(2, 1);
+    openGripper();
+    grabPiece(3, 1); 
+    openGripper(); 
+
+
+
 
   /*
   for(int i=1; i<3; i++)
