@@ -57,6 +57,13 @@ int nb_row;
 int x_cases[16]; 
 int y_cases[16]; 
 
+// Variables for manual input 
+String stringCase; 
+int chosenX; 
+int chosenY; 
+bool manual = true; 
+bool play = false; 
+
 
 // Quick conversion from the Braccio angle system to radians
 float b2a(float b){
@@ -114,12 +121,6 @@ void setup() {
   longDelay = 30; 
   nb_row = sqrt(nb_pieces); 
  
-  // Place le braccio à l'angle 270 pour notre repère 
-  //Vstep_base = 30;
-  //Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-  
-  Vstep_wrist_rot = 90;
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
 
   for(int Y=0; Y<nb_row; Y++)
   {
@@ -130,39 +131,36 @@ void setup() {
     }
   }
 
-
-  int X_decalage = 35; 
-  int Y_decalage = 35; 
+  // Define the coordinates of all cases   
+  x_cases[0] = 171; 
+  y_cases[0] = 228; 
   
-  x_cases[0] = 161; 
-  y_cases[0] = 226; 
-  
-  x_cases[1] = 206; 
-  y_cases[1] = 185; 
+  x_cases[1] = 202; 
+  y_cases[1] = 195; 
 
-  x_cases[2] = 230; 
-  y_cases[2] = 155;  
+  x_cases[2] = 223; 
+  y_cases[2] = 168;  
 
-  x_cases[3] = 252; 
-  y_cases[3] = 119; 
+  x_cases[3] = 254; 
+  y_cases[3] = 132; 
 
-  x_cases[4] = 184; 
-  y_cases[4] = 246; 
+  x_cases[4] = 190; 
+  y_cases[4] = 245; 
 
-  x_cases[5] = 232; 
-  y_cases[5] = 201; 
+  x_cases[5] = 234; 
+  y_cases[5] = 205; 
 
-  x_cases[6] = 268; 
-  y_cases[6] = 178; 
+  x_cases[6] = 252; 
+  y_cases[6] = 196; 
 
-  x_cases[7] = 272; 
-  y_cases[7] = 169; 
+  x_cases[7] = 285; 
+  y_cases[7] = 155; 
 
-  x_cases[8] = 191; 
-  y_cases[8] = 287; 
+  x_cases[8] = 213; 
+  y_cases[8] = 280; 
 
-  x_cases[9] = 252; 
-  y_cases[9] = 261; 
+  x_cases[9] = 263; 
+  y_cases[9] = 241; 
 
   x_cases[10] = 272; 
   y_cases[10] = 241; 
@@ -172,18 +170,27 @@ void setup() {
 
 
 
-    grabPiece(2, 1);
-    openGripper();
-    grabPiece(3, 1); 
-    openGripper(); 
-
-
-
+  //parcoursMoveAPiece(2, 4); 
 
   /*
-  for(int i=1; i<3; i++)
+  grabPiece(0, 0);
+  openGripper(); 
+  grabPiece(0, 1); 
+  openGripper();
+  */
+  /*
+  grabPiece(2, 2);
+  openGripper();
+  grabPiece(3, 2);
+  */
+}
+
+// Go through all case with some limitations
+void parcoursMoveAPiece(int xMax, int yMax)
+{
+  for(int i=0; i<xMax; i++)
   {
-    for(int j=0; j<4; j++) 
+    for(int j=0; j<yMax; j++) 
     {
       grabPiece(j, i); 
 
@@ -191,151 +198,9 @@ void setup() {
       else              releasePiece(j+1, i);
     }
   }
-  */
-
-  /*
-  grabPiece(3, 2); 
-
-  openGripper(); */
-
-  /*
-  grabPiece(0, 2); 
-
-  openGripper(); 
-  
-  grabPiece(1, 2);
-
-  openGripper(); 
-  
-  grabPiece(2, 2);
-
-  openGripper(); 
-  
-  grabPiece(3, 2);
-
-  openGripper(); 
-  
-  grabPiece(4, 2);
-
-  openGripper();
-  */
-
-/*
-  grabPiece(0, 1); 
-  openGripper(); 
-
-  grabPiece(1, 1); 
-
-  openGripper(); 
-
-  grabPiece(2, 1); 
-
-  openGripper(); 
-
-  grabPiece(3, 1); 
-
-  openGripper(); 
-  */
-
-
-  // TURN ON 2 FIRST ROWS
-/*
-  grabPiece(0, 0); 
-  
-  releasePiece(1, 0); 
-
-  grabPiece(1, 0); 
-
-  releasePiece(2, 0); 
-
-  grabPiece(2, 0); 
-
-  releasePiece(3, 0); 
-
-  grabPiece(3, 0); 
-
-  releasePiece(3, 1); 
-
-  grabPiece(3, 1); 
-
-  releasePiece(2, 1); 
-
-  grabPiece(2, 1); 
-
-  releasePiece(1, 1); 
-
-  grabPiece(1, 1); 
-
-  releasePiece(0, 1); 
-
-  grabPiece(0, 1); 
-
-  releasePiece(0, 0); 
-  */
-  
-
-  /*
-  int x_first = 161;
-  int y_first = 226; 
-
-  
-  //x_first += 42;
-  //y_first -= 42;
-  
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-  
-
-  openGripper();
-
-  moveTo(x_first, y_first, z_on_case, a0, a1, a2, a3); 
-
-  
-  delay(200);
-
-  closeGripper();
-
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-  */
-
-
-  /*
-
-  x_first += 42;
-  y_first -= 42;
-
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-
-  moveTo(x_first, y_first, z_on_case, a0, a1, a2, a3);
-
-  openGripper();
-
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-
-  delay(200);
-  
-  moveTo(x_first, y_first, z_on_case, a0, a1, a2, a3);
-
-  closeGripper();
-
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-
-  moveTo(50, 50, 100, a0, a1, a2, a3);
-
-  x_first -= 42;
-  y_first += 42;
-
-  delay(200);
-  
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-
-  moveTo(x_first, y_first, z_on_case, a0, a1, a2, a3);
-
-  openGripper();
-
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-  */
 }
 
+// Grab a piece at coordinates (x,y)
 void grabPiece(int x, int y)
 {
   int xcase = x_cases[4*y+x]; 
@@ -353,6 +218,7 @@ void grabPiece(int x, int y)
   moveTo(xcase, ycase, z_upon_case, a0, a1, a2, a3);
 }
 
+// Release a piece at coordinates (x,y)
 void releasePiece(int x, int y)
 {
   int xcase = x_cases[4*y+x]; 
@@ -371,12 +237,11 @@ void releasePiece(int x, int y)
 
 
 void take() {
-  
   openGripper(); 
   closeGripper(); 
 }
 
-
+// Go to coordinate (x, y) 
 void moveTo(int x, int y, int z, float a0, float a1, float a2, float a3)
 {
   if (InverseK.solve(x, y, z, a0, a1, a2, a3))
@@ -386,16 +251,8 @@ void moveTo(int x, int y, int z, float a0, float a1, float a2, float a3)
   }
 }
 
-/*
-void getBack()
-{
-  Vstep_elbow = 90;
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-  Vstep_shoulder = 90; 
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-  
-}
 
+/*
 void pointSky(bool openIt) 
 {
   Vstep_wrist_ver = 90;
@@ -417,6 +274,71 @@ void pointSky(bool openIt)
 }
 */
 
+bool changeStringToCase(String stringCase) 
+{ 
+  switch(stringCase[0])
+  {
+    case 'A':
+    case 'a':
+      Serial.println("DETECT A"); 
+      chosenX = 0; 
+      break; 
+
+    case 'B':
+    case 'b':
+      Serial.println("DETECT B"); 
+      chosenX = 1; 
+      break; 
+
+    case 'C':
+    case 'c':
+      Serial.println("DETECT C"); 
+      chosenX = 2; 
+      break; 
+
+    case 'D':
+    case 'd':
+      Serial.println("DETECT D"); 
+      chosenX = 3;
+      break; 
+
+    default:
+      Serial.println("ERROR");
+      return false; 
+      break; 
+  }
+
+  switch(stringCase[1])
+  {
+    case '1':
+      Serial.println("DETECT 1"); 
+      chosenY = 0; 
+      break; 
+
+    case '2':
+      Serial.println("DETECT 2"); 
+      chosenY = 1; 
+      break; 
+
+    case '3':
+      Serial.println("DETECT 3"); 
+      chosenY = 2; 
+      break; 
+
+    case '4':
+      Serial.println("DETECT 4"); 
+      chosenY = 3;
+      break; 
+
+    default:
+      Serial.println("ERROR");
+      return false; 
+      break; 
+  }
+
+  return true; 
+}
+
 void openGripper() 
 {
   Vstep_gripper = 48; 
@@ -430,88 +352,26 @@ void closeGripper()
   Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
 }
 
-/*
-void grab()
-{
-  Vstep_wrist_ver = 180;
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-  
-  Vstep_elbow = 177; 
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-
-  
-  Vstep_shoulder = 85; 
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-  
-}
-
-void grabWithPiece()
-{
-  Vstep_wrist_ver = 180;
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-  
-  Vstep_elbow = 170; 
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-
-  
-  Vstep_shoulder = 90; 
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-}
-*/
-
 void loop() {
 
-  /*
-  int x_first = 161;
-  int y_first = 226; 
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
+
+  // If we want to do a real game, else we don't do anything 
+  if (manual) 
+  {
+    if (Serial.available() )
+    { 
+   
+        stringCase = Serial.readString();
+        Serial.println(stringCase);
   
+        play = changeStringToCase(stringCase); 
+        if (play)
+        {
+          // Play
+          Serial.println(chosenX); 
+          Serial.print(chosenY); 
+        }
 
-  openGripper();
-
-  moveTo(x_first, y_first, z_on_case, a0, a1, a2, a3); 
-
-  delay(200);
-
-  closeGripper();
-
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-
-  moveTo(50, 50, 100, a0, a1, a2, a3);
-
-  x_first += 42;
-  y_first -= 43;
-
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-
-  moveTo(x_first, y_first, z_on_case, a0, a1, a2, a3);
-
-  openGripper();
-
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-
-  delay(200);
-  
-  moveTo(x_first, y_first, z_on_case, a0, a1, a2, a3);
-
-  closeGripper();
-
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-
-  moveTo(50, 50, 100, a0, a1, a2, a3);
-
-  x_first -= 42;
-  y_first += 43;
-
-  delay(200);
-  
-  moveTo(x_first, y_first, z_upon_case, a0, a1, a2, a3);
-
-  moveTo(x_first, y_first, z_on_case, a0, a1, a2, a3);
-
-  openGripper();
-  delay(200);
-  */
-
-  
+    }
+  }
 }
