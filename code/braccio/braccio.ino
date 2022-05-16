@@ -47,7 +47,7 @@ float a3;
 int x_first_case = 0; 
 int y_first_case = 0;
 int z_upon_case = 200; 
-int z_on_case = -21; 
+int z_on_case = -21;
 
 
 int longDelay; 
@@ -134,29 +134,46 @@ void setup() {
   int X_decalage = 35; 
   int Y_decalage = 35; 
   
-  x_cases[0] = 161; 
-  y_cases[0] = 226; 
+  /*
+  x_cases[0] = 168; 
+  y_cases[0] = 236; 
   
-  x_cases[1] = 206; 
-  y_cases[1] = 185; 
+  x_cases[1] = 212; 
+  y_cases[1] = 191; 
 
-  x_cases[2] = 230; 
-  y_cases[2] = 155;  
+  x_cases[2] = 236; 
+  y_cases[2] = 161; 
+   
+  x_cases[3] = 260; 
+  y_cases[3] = 125; 
+  */
+  
+  x_cases[0] = 266; 
+  y_cases[0] = 200; 
+  
+  x_cases[1] = 300; 
+  y_cases[1] = 200; 
 
-  x_cases[3] = 252; 
-  y_cases[3] = 119; 
+  x_cases[2] = 333; 
+  y_cases[2] = 200;
+    
+  x_cases[3] = 366; 
+  y_cases[3] = 200; 
 
-  x_cases[4] = 184; 
-  y_cases[4] = 246; 
 
-  x_cases[5] = 232; 
-  y_cases[5] = 201; 
+  
 
-  x_cases[6] = 268; 
-  y_cases[6] = 178; 
+  x_cases[4] = 192; 
+  y_cases[4] = 256; 
 
-  x_cases[7] = 272; 
-  y_cases[7] = 169; 
+  x_cases[5] = 238; 
+  y_cases[5] = 207; 
+
+  x_cases[6] = 274; 
+  y_cases[6] = 184; 
+
+  x_cases[7] = 280; 
+  y_cases[7] = 175; 
 
   x_cases[8] = 191; 
   y_cases[8] = 287; 
@@ -172,11 +189,26 @@ void setup() {
 
 
 
-    grabPiece(2, 1);
-    openGripper();
-    grabPiece(3, 1); 
-    openGripper(); 
-
+    grabPiece(0, 0);
+    delay(1);
+    releasePiece(1, 0);
+    delay(1);
+    grabPiece(1, 0);
+    delay(1);
+    releasePiece(2, 0);
+    delay(1);
+    grabPiece(2, 0);
+    delay(1);
+    releasePiece(3, 0);
+    grabPiece(3, 0);
+    /*releasePiece(0, 1);
+    grabPiece(0, 1);
+    releasePiece(1, 1);
+    grabPiece(1, 1);
+    releasePiece(1, 2);
+    grabPiece(1, 2);
+    releasePiece(1, 3
+    );*/
 
 
 
