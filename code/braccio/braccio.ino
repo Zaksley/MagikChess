@@ -37,8 +37,6 @@ int x;
 int y;
 int z;
 
-int z_take = -5;
-
 float a0;
 float a1;
 float a2;
@@ -47,7 +45,7 @@ float a3;
 int x_first_case = 0;
 int y_first_case = 0;
 int z_upon_case = 200;
-int z_on_case = -10;
+int z_on_case = 5;
 
 
 int longDelay;
@@ -56,6 +54,7 @@ int nb_row;
 
 int x_cases[16];
 int y_cases[16];
+int z_cases[16];
 
 // Variables for manual input
 String stringCase;
@@ -107,7 +106,9 @@ void moveTo(int x, int y, int z, float a0, float a1, float a2, float a3)
 {
   if (InverseK.solve(x, y, z, a0, a1, a2, a3))
   {
+    
     rad2brac(a0, a1, a2, a3);
+    Vstep_shoulder -= 7;
     Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
   }
 }
@@ -136,13 +137,14 @@ void grabPiece(int x, int y)
 {
   int xcase = x_cases[4*y+x];
   int ycase = y_cases[4*y+x];
+  int zcase = z_cases[4*y+x];
 
 
   moveTo(xcase, ycase, z_upon_case, a0, a1, a2, a3);
 
   openGripper();
 
-  moveTo(xcase, ycase, z_on_case, a0, a1, a2, a3);
+  moveTo(xcase, ycase, zcase, a0, a1, a2, a3);
 
   closeGripper();
 
@@ -154,12 +156,14 @@ void releasePiece(int x, int y)
 {
   int xcase = x_cases[4*y+x];
   int ycase = y_cases[4*y+x];
+  int zcase = z_cases[4*y+x];
+
 
   moveTo(xcase, ycase, z_upon_case, a0, a1, a2, a3);
 
   //openGripper();
 
-  moveTo(xcase, ycase, z_on_case, a0, a1, a2, a3);
+  moveTo(xcase, ycase, zcase, a0, a1, a2, a3);
 
   openGripper();
 
@@ -474,6 +478,10 @@ void setup() {
   longDelay = 30;
   nb_row = sqrt(nb_pieces);
 
+  Vstep_wrist_rot = 90;
+  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
+
+
 
   for(int Y=0; Y<nb_row; Y++)
   {
@@ -481,76 +489,92 @@ void setup() {
     {
       x_cases[nb_row*Y + X] = 0;
       y_cases[nb_row*Y + X] = 0;
+      z_cases[nb_row*Y + X] = z_on_case;
     }
   }
 
   // Define the coordinates of all cases
+    /*
+  x_cases[0] = 0;
+  y_cases[0] = 0;
+
+  x_cases[1] = 50;
+  y_cases[1] = 0;
+
+  x_cases[2] = 0;
+  y_cases[2] = 50;
+
+  x_cases[3] = 50;
+  y_cases[3] = 50;
+
+  x_cases[4] = 20;
+  y_cases[4] = 20;
+    */
+
+  // Réserve de pièces
+  // x_stock = 
+
+    
+  // Ligne 1
   x_cases[0] = 171;
-  y_cases[0] = 228;
+  y_cases[0] = 239;
+  z_cases[0] -= 1;
 
-  x_cases[1] = 202;
-  y_cases[1] = 195;
+  x_cases[1] = 180;
+  y_cases[1] = 160;
 
-  x_cases[2] = 223;
-  y_cases[2] = 168;
-
-  x_cases[3] = 254;
-  y_cases[3] = 132;
-
-  x_cases[4] = 190;
-  y_cases[4] = 245;
-  int X_decalage = 35;
-  int Y_decalage = 35;
-
-  /*
-  x_cases[0] = 168;
-  y_cases[0] = 236;
-
-  x_cases[1] = 212;
-  y_cases[1] = 191;
-
-  x_cases[2] = 236;
-  y_cases[2] = 161;
+  /*x_cases[1] = 215;
+  y_cases[1] = 194;
+*/
+  x_cases[2] = 239;
+  y_cases[2] = 165;
+  z_cases[2] -= 2;
 
   x_cases[3] = 260;
-  y_cases[3] = 125;
-  */
+  y_cases[3] = 138;
+  z_cases[3] -= 2;
 
-  x_cases[0] = 266;
-  y_cases[0] = 200;
+  // Ligne 2
+  x_cases[4] = 195;
+  y_cases[4] = 255;  
 
-  x_cases[1] = 300;
-  y_cases[1] = 200;
+  x_cases[5] = 240;
+  y_cases[5] = 213;
+ 
+  x_cases[6] = 265;
+  y_cases[6] = 185;
+  z_cases[6] += 2;
 
-  x_cases[2] = 333;
-  y_cases[2] = 200;
+  x_cases[7] = 292;
+  y_cases[7] = 157;
+  z_cases[7] += 4;
 
-  x_cases[3] = 366;
-  y_cases[3] = 200;
+  // Ligne 3
+  x_cases[8] = 224;
+  y_cases[8] = 289; 
 
-  x_cases[4] = 192;
-  y_cases[4] = 256;
+  x_cases[9] = 267; 
+  y_cases[9] = 238; 
+  z_cases[9] += 2;
 
-  x_cases[5] = 238;
-  y_cases[5] = 207;
+  x_cases[10] = 296; 
+  y_cases[10] = 224; 
 
-  x_cases[6] = 274;
-  y_cases[6] = 184;
+  x_cases[11] = 318;
+  y_cases[11] = 184;
+  
+  // Ligne 4
+  x_cases[12] = 254;
+  y_cases[12] = 313;
 
-  x_cases[7] = 280;
-  y_cases[7] = 175;
+  x_cases[13] = 271;
+  y_cases[13] = 287;
 
-  x_cases[8] = 191;
-  y_cases[8] = 287; 
+  x_cases[14] = 330;
+  y_cases[14] = 230;
 
-  x_cases[9] = 252; 
-  y_cases[9] = 261; 
-
-  x_cases[10] = 272; 
-  y_cases[10] = 241; 
-
-  x_cases[11] = 293;
-  y_cases[11] = 196;
+  x_cases[15] = 350;
+  y_cases[15] = 195;
 
 
 
@@ -598,7 +622,7 @@ void setup() {
 
     Serial.print("NO TIME TO WAIT\n");
     */
-
+/*
     int move = 0;
     int player = 1;
 
@@ -632,22 +656,20 @@ void setup() {
 
     getWinner(pointsBlue, pointsBlack);
 
+*/
 
 
+  // parcoursMoveAPiece(3, 4);
 
-  //parcoursMoveAPiece(2, 4);
-
-  /*
-  grabPiece(0, 0);
-  openGripper();
-  grabPiece(0, 1);
-  openGripper();
-  */
-  /*
-  grabPiece(2, 2);
-  openGripper();
-  grabPiece(3, 2);
-  */
+  grabPiece(1, 0);
+  releasePiece(0, 0);
+  
+  /*for (int i = 0; i < 4; i++){
+    for (int j = 0; j < 4; j++){
+      grabPiece(0, 0);
+      releasePiece(i, j);
+    }
+  }*/
 }
 
 
