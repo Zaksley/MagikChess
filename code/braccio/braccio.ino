@@ -56,6 +56,9 @@ int x_cases[16];
 int y_cases[16];
 int z_cases[16];
 
+int x_stock;
+int y_stock;
+
 // Variables for manual input
 String stringCase;
 int chosenX;
@@ -106,7 +109,7 @@ void moveTo(int x, int y, int z, float a0, float a1, float a2, float a3)
 {
   if (InverseK.solve(x, y, z, a0, a1, a2, a3))
   {
-    
+
     rad2brac(a0, a1, a2, a3);
     Vstep_shoulder -= 7;
     Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
@@ -124,7 +127,8 @@ void parcoursMoveAPiece(int xMax, int yMax)
   {
     for(int j=0; j<yMax; j++)
     {
-      grabPiece(j, i);
+      //grabPiece(j, i);
+      takeStock(); 
 
       if (j+1 % 4 == 0) releasePiece(0, i+1);
       else              releasePiece(j+1, i);
@@ -141,13 +145,9 @@ void grabPiece(int x, int y)
 
 
   moveTo(xcase, ycase, z_upon_case, a0, a1, a2, a3);
-
   openGripper();
-
   moveTo(xcase, ycase, zcase, a0, a1, a2, a3);
-
   closeGripper();
-
   moveTo(xcase, ycase, z_upon_case, a0, a1, a2, a3);
 }
 
@@ -160,14 +160,24 @@ void releasePiece(int x, int y)
 
 
   moveTo(xcase, ycase, z_upon_case, a0, a1, a2, a3);
-
-  //openGripper();
-
   moveTo(xcase, ycase, zcase, a0, a1, a2, a3);
-
   openGripper();
-
   moveTo(xcase, ycase, z_upon_case, a0, a1, a2, a3);
+}
+
+void takeStock()
+{
+  moveTo(x_stock, y_stock, z_upon_case, a0, a1, a2, a3);
+  openGripper(); 
+  moveTo(x_stock, y_stock, z_on_case, a0, a1, a2, a3);
+  closeGripper(); 
+  moveTo(x_stock, y_stock, z_upon_case, a0, a1, a2, a3);
+}
+
+void PlayAndPutPiece(int x, int y) 
+{
+  takeStock(); 
+  releasePiece(x, y); 
 }
 
 
@@ -283,9 +293,11 @@ void putPiece(int x, int y, int sizeBoard, enum Color color, int b[][4])
     {
         b[x][y] = color;
         nbCasesAvailable--;
+        PlayAndPutPiece(x, y); 
+        
     }
     else
-        Serial.print("Can't put piece\n");
+        Serial.println("CASE OCCUPEE - Proposez une autre case");
 }
 
 // Gets the name of the color from the enum
@@ -378,7 +390,7 @@ void printBoard(int b[][4], int sizeBoard)
     {
         for(int j=0; j<sizeBoard; j++)
         {
-            Serial.print(b[i][j]);
+            Serial.print(b[j][i]);
             if (j == 3)
                 Serial.print("\n");
         }
@@ -478,6 +490,7 @@ void setup() {
   longDelay = 30;
   nb_row = sqrt(nb_pieces);
 
+  // Rotate to get wrist in the good orientation 
   Vstep_wrist_rot = 90;
   Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
 
@@ -494,38 +507,20 @@ void setup() {
   }
 
   // Define the coordinates of all cases
-    /*
-  x_cases[0] = 0;
-  y_cases[0] = 0;
-
-  x_cases[1] = 50;
-  y_cases[1] = 0;
-
-  x_cases[2] = 0;
-  y_cases[2] = 50;
-
-  x_cases[3] = 50;
-  y_cases[3] = 50;
-
-  x_cases[4] = 20;
-  y_cases[4] = 20;
-    */
 
   // Réserve de pièces
-  // x_stock = 
+  x_stock = 180; 
+  y_stock = 160; 
 
-    
+
   // Ligne 1
   x_cases[0] = 171;
   y_cases[0] = 239;
   z_cases[0] -= 1;
 
-  x_cases[1] = 180;
-  y_cases[1] = 160;
-
-  /*x_cases[1] = 215;
+  x_cases[1] = 215;
   y_cases[1] = 194;
-*/
+
   x_cases[2] = 239;
   y_cases[2] = 165;
   z_cases[2] -= 2;
@@ -536,11 +531,11 @@ void setup() {
 
   // Ligne 2
   x_cases[4] = 195;
-  y_cases[4] = 255;  
+  y_cases[4] = 255;
 
   x_cases[5] = 240;
   y_cases[5] = 213;
- 
+
   x_cases[6] = 265;
   y_cases[6] = 185;
   z_cases[6] += 2;
@@ -551,18 +546,18 @@ void setup() {
 
   // Ligne 3
   x_cases[8] = 224;
-  y_cases[8] = 289; 
+  y_cases[8] = 289;
 
-  x_cases[9] = 267; 
-  y_cases[9] = 238; 
+  x_cases[9] = 267;
+  y_cases[9] = 238;
   z_cases[9] += 2;
 
-  x_cases[10] = 296; 
-  y_cases[10] = 224; 
+  x_cases[10] = 296;
+  y_cases[10] = 224;
 
   x_cases[11] = 318;
   y_cases[11] = 184;
-  
+
   // Ligne 4
   x_cases[12] = 254;
   y_cases[12] = 313;
@@ -580,7 +575,7 @@ void setup() {
 
   // ###########################
   // ###########################
-
+  /*
     int sizeBoard = 4;
     nbCasesAvailable = sizeBoard * sizeBoard;
 
@@ -590,41 +585,10 @@ void setup() {
                         {0, 0, 0, 0}
                     };
 
-
-    /*
-    for(int i=0; i<4; i++)
-    {
-        for(int j=0; j<4; j++)
-        {
-            putPiece(i, j, 4, -1, Board);
-        }
-    }
-    */
-
-      /*
-    if (manual)
-    {
-      if (Serial.available() )
-      {
-
-          stringCase = Serial.readString();
-          Serial.println(stringCase);
-
-          play = changeStringToCase(stringCase);
-          if (play)
-          {
-            // Play
-            Serial.println(chosenX);
-            Serial.print(chosenY);
-          }
-      }
-    }
-
-    Serial.print("NO TIME TO WAIT\n");
-    */
-/*
+    
     int move = 0;
     int player = 1;
+    int searchCase = true;
 
     printBoard(Board, 4);
     while(nbCasesAvailable > 0)
@@ -648,22 +612,26 @@ void setup() {
 
         putPiece(x, y, sizeBoard, player, Board);
         printBoard(Board, 4);
-
     }
 
     int pointsBlue = checkPoints(sizeBoard, BLUE, Board);
     int pointsBlack = checkPoints(sizeBoard, BLACK, Board);
 
-    getWinner(pointsBlue, pointsBlack);
+    getWinner(pointsBlue, pointsBlack);*/
+    
 
-*/
 
 
-  // parcoursMoveAPiece(3, 4);
-
-  grabPiece(1, 0);
-  releasePiece(0, 0);
+  //takeStock(); 
   
+
+
+  //parcoursMoveAPiece(4, 4);
+
+  /*
+  grabPiece(1, 0);
+  releasePiece(0, 0);*/
+
   /*for (int i = 0; i < 4; i++){
     for (int j = 0; j < 4; j++){
       grabPiece(0, 0);
@@ -675,52 +643,82 @@ void setup() {
 
 
 
-/*
-void pointSky(bool openIt)
-{
-  Vstep_wrist_ver = 90;
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-
-  Vstep_elbow = 90;
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-
-  Vstep_shoulder = 90;
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-
-  Vstep_wrist_rot = 90;
-  Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
-
-  if (openIt)
-    openGripper();
-  else
-    closeGripper();
-}
-*/
-
-
 void loop() {
 
 
   // If we want to do a real game, else we don't do anything
+  int sizeBoard = 4;
+  nbCasesAvailable = sizeBoard * sizeBoard;
 
-  /*
+  int Board[][4] = { {0, 0, 0, 0},
+                        {0, 0, 0, 0},
+                        {0, 0, 0, 0},
+                        {0, 0, 0, 0}
+                    };
+
+  int move = 0;
+  int player = 1;
+  int searchCase = true;
+  
   if (manual)
   {
-    if (Serial.available() )
-    {
-
-        stringCase = Serial.readString();
-        Serial.println(stringCase);
-
-        play = changeStringToCase(stringCase);
-        if (play)
+       while(nbCasesAvailable > 0)
+      {
+        if (Serial.available() )
         {
-          // Play
-          Serial.println(chosenX);
-          Serial.print(chosenY);
+          stringCase = Serial.readString();
+          Serial.println(stringCase);
+  
+          play = changeStringToCase(stringCase);
+          if (play)
+          {
+            // Play
+            putPiece(chosenX, chosenY, sizeBoard, player, Board);
+            printBoard(Board, 4);
+            player *= -1; 
+          }
         }
-
-    }
+      }
   }
-  */
+  else 
+  {
+      printBoard(Board, 4);
+      while(nbCasesAvailable > 0)
+      {
+          if (move = 0)
+              player = 1;
+          else
+              player *= -1;
+  
+          coords* test_case;
+          test_case = avalaibleMovements(Board, sizeBoard);
+  
+          int x = 0;
+          int y = 0;
+  
+          int rand = random(0, nbCasesAvailable); 
+          Serial.println(rand);
+          x = test_case[rand].x;
+          y = test_case[rand].y;
+          free(test_case);
+  
+          putPiece(x, y, sizeBoard, player, Board);
+          printBoard(Board, 4);
+      }
+  }
+
+
+  int pointsBlue = checkPoints(sizeBoard, BLUE, Board);
+  int pointsBlack = checkPoints(sizeBoard, BLACK, Board);
+
+  getWinner(pointsBlue, pointsBlack);
+
+  exit(0); 
+  
 }
+
+
+
+
+
+  
