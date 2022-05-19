@@ -587,7 +587,7 @@ int heuristic(int b[][4], int sizeBoard, int x, int y, int player)
 
         for(int i=sizeBoard-1; i>-1; i--)
         {
-            if (b[i][i] == player)
+            if (b[sizeBoard-1-i][i] == player)
                 c++;
 
             if (b[i][i] == -1 * player)
