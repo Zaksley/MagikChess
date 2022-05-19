@@ -706,9 +706,9 @@ void setup() {
   // Define the coordinates of all cases
 
   // Réserve de pièces
-  x_stock = 183; 
-  y_stock = 162;
-  z_stock = 1;
+  x_stock = 187; 
+  y_stock = 163;
+  z_stock = -1;
 
 
   // Ligne 1
@@ -760,19 +760,19 @@ void setup() {
   // Ligne 4
   x_cases[12] = 244;
   y_cases[12] = 308;
-  z_cases[15] += 50;
+  z_cases[12] += 10;
 
   x_cases[13] = 273;
   y_cases[13] = 277;
-  z_cases[15] += 5;
+  z_cases[13] += 10;
 
   x_cases[14] = 302;
   y_cases[14] = 234;
-  z_cases[15] += 5;
+  z_cases[14] += 10;
 
   x_cases[15] = 339;
   y_cases[15] = 191;
-  z_cases[15] += 5;
+  z_cases[15] += 15;
 
 
 
@@ -917,7 +917,10 @@ void loop() {
           putRealPiece(x, y, sizeBoard, player, Board);
           printBoard(Board, 4);
         }
+
+        player *= -1;
       }
+
   }
 
   free(stack); 
