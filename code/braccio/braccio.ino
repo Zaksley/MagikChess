@@ -70,6 +70,10 @@ bool play = false;
 // Variables for the game
 int nbCasesAvailable;
 
+// IA variables
+int sizeStack;
+
+
 enum Color
 {
     BLUE = -1,
@@ -290,7 +294,7 @@ bool canPutPiece(int x, int y, int sizeBoard, int b[][4])
 }
 
 // Put a piece on the coordinate (x, y) if it is possible
-void putPiece(int x, int y, int sizeBoard, enum Color color, int b[][4])
+void putRealPiece(int x, int y, int sizeBoard, enum Color color, int b[][4])
 {
     if (canPutPiece(x, y, sizeBoard, b))
     {
@@ -301,6 +305,46 @@ void putPiece(int x, int y, int sizeBoard, enum Color color, int b[][4])
     }
     else
         Serial.println("CASE OCCUPEE - Proposez une autre case");
+}
+
+int putPiece(int x, int y, int sizeBoard, enum Color color, int b[][4])
+{
+    if (canPutPiece(x, y, sizeBoard, b))
+    {
+        b[x][y] = color;
+        nbCasesAvailable--;
+        return 1;
+    }
+    else
+    {
+        Serial.println("CASE OCCUPEE - Proposez une autre case");
+        return 0;
+    }
+}
+
+void removePiece(int x, int y, int b[][4])
+{
+    b[x][y] = 0;
+    nbCasesAvailable++;
+}
+
+void push(coords* stack, int player, int x, int y, int b[][4])
+{
+
+    if (putPiece(x, y, 4, player, b))
+    {
+            coords c = {x, y};
+        stack[sizeStack] = c;
+        sizeStack++;
+    }
+}
+
+void depush(coords* stack, int x, int y, int b[][4])
+{
+    sizeStack--;
+    coords c = {0, 0};
+    stack[sizeStack] = c;
+    removePiece(x, y, b);
 }
 
 // Gets the name of the color from the enum
@@ -449,6 +493,156 @@ int getWinner(int pointsBlue, int pointsBlack)
   }
 }
 
+// ##########################################################
+//            Dump AI
+// ##########################################################
+
+int heuristic(int b[][4], int sizeBoard, int x, int y, int player)
+{
+    int val = 0;
+    int c = 0;
+    int c_minus = 0;
+
+    if (x > 0)
+        if (b[x-1][y] == player)
+            val++;
+
+    if (x < sizeBoard-1)
+        if (b[x+1][y] == player)
+            val++;
+
+    if (y > 0)
+        if (b[x][y-1] == player)
+            val++;
+
+    if (y < sizeBoard-1)
+        if (b[x][y+1] == player)
+            val++;
+
+    // Line
+    for(int i=0; i<sizeBoard; i++)
+    {
+        if (b[i][y] == player)
+            c++;
+
+        if (b[i][y] == -1 * player)
+            c_minus++;
+    }
+
+    if (c == 4)
+    {
+        val += 100;
+    }
+
+    if (c_minus == 3)
+    {
+        val+= 100;
+    }
+
+
+    c = 0;
+    c_minus = 0;
+    for(int i=0; i<sizeBoard; i++)
+    {
+        if (b[x][i] == player)
+            c++;
+
+        if (b[x][i] == -1 * player)
+            c_minus++;
+    }
+
+    if (c == 4)
+    {
+        val += 100;
+    }
+
+    if (c_minus == 3)
+    {
+        val+= 100;
+    }
+
+    c = 0;
+    c_minus = 0;
+    // Diagonal
+    if (x == y)
+    {
+         for(int i=0; i<sizeBoard; i++)
+        {
+            if (b[i][i] == player)
+                c++;
+
+            if (b[i][i] == -1 * player)
+                c_minus++;
+        }
+
+        if (c == 4)
+        {
+            val += 100;
+        }
+
+        if (c_minus == 3)
+        {
+            val+= 100;
+        }
+        c=0;
+        c_minus = 0;
+
+
+        for(int i=sizeBoard-1; i>-1; i--)
+        {
+            if (b[i][i] == player)
+                c++;
+
+            if (b[i][i] == -1 * player)
+                c_minus++;
+        }
+
+        if (c == 4)
+        {
+            val += 100;
+        }
+
+        if (c_minus == 3)
+        {
+            val+= 100;
+        }
+        c = 0;
+        c_minus = 0;
+    }
+
+
+    return val;
+}
+
+coords minmax_move(int b[][4], coords* stack, int player)
+{
+    int val = 0;
+    int new_val = 0;
+    int c = 0;
+    coords best_move = {0, 0};
+
+    if (player)
+    {
+        val = -10000;
+        coords* test_case = avalaibleMovements(b, 4);
+        for (int i=0; i<nbCasesAvailable; i++)
+        {
+            coords move = {test_case[i].x, test_case[i].y};
+            push(stack, player, move.x, move.y, b);
+
+            new_val = heuristic(b, 4, move.x, move.y, player);
+            if (new_val > val)
+            {
+                val = new_val;
+                best_move = move;
+            }
+            depush(stack, test_case[i].x, test_case[i].y, b);
+        }
+    }
+
+
+    return best_move;
+}
 
 
 // ##########################################################
@@ -665,9 +859,12 @@ void loop() {
                         {0, 0, 0, 0}
                     };
 
-  int move = 0;
   int player = 1;
   int searchCase = true;
+
+    // Stack
+  coords* stack = malloc(sizeBoard * sizeBoard * sizeof(coords));
+  sizeStack = 0;
   
   if (manual)
   {
@@ -682,7 +879,7 @@ void loop() {
           if (play)
           {
             // Play
-            putPiece(chosenX, chosenY, sizeBoard, player, Board);
+            putRealPiece(chosenX, chosenY, sizeBoard, player, Board);
             printBoard(Board, 4);
             player *= -1; 
           }
@@ -694,11 +891,17 @@ void loop() {
       printBoard(Board, 4);
       while(nbCasesAvailable > 0)
       {
-          if (move = 0)
-              player = 1;
-          else
-              player *= -1;
-  
+        // AI
+        if (player == 1)
+        {
+          Serial.println("Coup IA"); 
+          coords move = minmax_move(Board, stack, player);
+          putRealPiece(move.x, move.y, sizeBoard, player, Board);
+        }
+        else 
+        {
+          
+          Serial.println("Coup Bot"); 
           coords* test_case;
           test_case = avalaibleMovements(Board, sizeBoard);
   
@@ -711,12 +914,15 @@ void loop() {
           y = test_case[rand].y;
           free(test_case);
   
-          putPiece(x, y, sizeBoard, player, Board);
+          putRealPiece(x, y, sizeBoard, player, Board);
           printBoard(Board, 4);
+        }
       }
   }
 
+  free(stack); 
 
+ // Bug display! 
   int pointsBlue = checkPoints(sizeBoard, BLUE, Board);
   int pointsBlack = checkPoints(sizeBoard, BLACK, Board);
 
