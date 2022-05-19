@@ -58,6 +58,7 @@ int z_cases[16];
 
 int x_stock;
 int y_stock;
+int z_stock;
 
 // Variables for manual input
 String stringCase;
@@ -167,9 +168,11 @@ void releasePiece(int x, int y)
 
 void takeStock()
 {
+  moveTo(x_cases[2], y_cases[2], z_upon_case, a0, a1, a2, a3); 
+  
   moveTo(x_stock, y_stock, z_upon_case, a0, a1, a2, a3);
   openGripper(); 
-  moveTo(x_stock, y_stock, z_on_case, a0, a1, a2, a3);
+  moveTo(x_stock, y_stock, z_stock, a0, a1, a2, a3);
   closeGripper(); 
   moveTo(x_stock, y_stock, z_upon_case, a0, a1, a2, a3);
 }
@@ -188,7 +191,7 @@ void take() {
 
 void openGripper()
 {
-  Vstep_gripper = 48;
+  Vstep_gripper = 46;
   Braccio.ServoMovement(longDelay, Vstep_base, Vstep_shoulder, Vstep_elbow, Vstep_wrist_ver, Vstep_wrist_rot, Vstep_gripper);
 
 }
@@ -509,8 +512,9 @@ void setup() {
   // Define the coordinates of all cases
 
   // Réserve de pièces
-  x_stock = 180; 
-  y_stock = 160; 
+  x_stock = 183; 
+  y_stock = 162;
+  z_stock = 1;
 
 
   // Ligne 1
@@ -518,58 +522,63 @@ void setup() {
   y_cases[0] = 239;
   z_cases[0] -= 1;
 
-  x_cases[1] = 215;
-  y_cases[1] = 194;
+  x_cases[1] = 198;
+  y_cases[1] = 207;
 
-  x_cases[2] = 239;
-  y_cases[2] = 165;
+  x_cases[2] = 233;
+  y_cases[2] = 166;
   z_cases[2] -= 2;
 
-  x_cases[3] = 260;
-  y_cases[3] = 138;
+  x_cases[3] = 255;
+  y_cases[3] = 136;
   z_cases[3] -= 2;
 
   // Ligne 2
-  x_cases[4] = 195;
-  y_cases[4] = 255;
+  x_cases[4] = 194;
+  y_cases[4] = 256;
 
-  x_cases[5] = 240;
-  y_cases[5] = 213;
+  x_cases[5] = 218;
+  y_cases[5] = 235;
 
-  x_cases[6] = 265;
-  y_cases[6] = 185;
+  x_cases[6] = 240;
+  y_cases[6] = 213;
   z_cases[6] += 2;
 
-  x_cases[7] = 292;
-  y_cases[7] = 157;
+  x_cases[7] = 289;
+  y_cases[7] = 152;
   z_cases[7] += 4;
 
   // Ligne 3
-  x_cases[8] = 224;
-  y_cases[8] = 289;
+  x_cases[8] = 221;
+  y_cases[8] = 286;
 
-  x_cases[9] = 267;
-  y_cases[9] = 238;
-  z_cases[9] += 2;
+  x_cases[9] = 244;
+  y_cases[9] = 262;
+  z_cases[9] += 3;
 
-  x_cases[10] = 296;
-  y_cases[10] = 224;
+  x_cases[10] = 267;
+  y_cases[10] = 238;
+  z_cases[10] += 2;
 
-  x_cases[11] = 318;
-  y_cases[11] = 184;
+  x_cases[11] = 316;
+  y_cases[11] = 177;
 
   // Ligne 4
-  x_cases[12] = 254;
-  y_cases[12] = 313;
+  x_cases[12] = 244;
+  y_cases[12] = 308;
+  z_cases[15] += 50;
 
-  x_cases[13] = 271;
-  y_cases[13] = 287;
+  x_cases[13] = 273;
+  y_cases[13] = 277;
+  z_cases[15] += 5;
 
-  x_cases[14] = 330;
-  y_cases[14] = 230;
+  x_cases[14] = 302;
+  y_cases[14] = 234;
+  z_cases[15] += 5;
 
-  x_cases[15] = 350;
-  y_cases[15] = 195;
+  x_cases[15] = 339;
+  y_cases[15] = 191;
+  z_cases[15] += 5;
 
 
 
