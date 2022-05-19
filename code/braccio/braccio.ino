@@ -427,6 +427,7 @@ int checkPoints(int sizeBoard, enum Color color, int b[][4])
     return points;
 }
 
+
 // Display the board (usefull for bebug especially)
 void printBoard(int b[][4], int sizeBoard)
 {
@@ -494,11 +495,41 @@ int getWinner(int pointsBlue, int pointsBlack)
 //            Dump AI
 // ##########################################################
 
+int lineVertical(int b[][4], int y, int sizeBoard, int player)
+{
+  for(int i=0; i<sizeBoard; i++)
+  {
+    if (b[i][y] == (player*-1))
+      return 0;
+  }
+
+  return 1;
+}
+
+int lineHorizontal(int b[][4], int x, int sizeBoard, int player)
+{
+  for(int i=0; i<sizeBoard; i++)
+  {
+    if (b[x][i] == (player*-1))
+      return 0;
+  }
+
+  return 1;
+}
+
+
+
 int heuristic(int b[][4], int sizeBoard, int x, int y, int player)
 {
     int val = 0;
     int c = 0;
     int c_minus = 0;
+
+    if (lineHorizontal(b, x, sizeBoard, player))
+        val += 5;
+
+    if (lineVertical(b, y, sizeBoard, player))
+        val += 5;
 
     if (x > 0)
         if (b[x-1][y] == player)
@@ -526,7 +557,7 @@ int heuristic(int b[][4], int sizeBoard, int x, int y, int player)
             c_minus++;
     }
 
-    if (c == 4)
+    if (c ==3)
     {
         val += 100;
     }
@@ -542,13 +573,16 @@ int heuristic(int b[][4], int sizeBoard, int x, int y, int player)
     for(int i=0; i<sizeBoard; i++)
     {
         if (b[x][i] == player)
+        {
             c++;
+        }
 
         if (b[x][i] == -1 * player)
             c_minus++;
+
     }
 
-    if (c == 4)
+    if (c == 3)
     {
         val += 100;
     }
@@ -563,7 +597,7 @@ int heuristic(int b[][4], int sizeBoard, int x, int y, int player)
     // Diagonal
     if (x == y)
     {
-         for(int i=0; i<sizeBoard; i++)
+        for(int i=0; i<sizeBoard; i++)
         {
             if (b[i][i] == player)
                 c++;
@@ -572,7 +606,7 @@ int heuristic(int b[][4], int sizeBoard, int x, int y, int player)
                 c_minus++;
         }
 
-        if (c == 4)
+        if (c == 3)
         {
             val += 100;
         }
@@ -581,20 +615,22 @@ int heuristic(int b[][4], int sizeBoard, int x, int y, int player)
         {
             val+= 100;
         }
-        c=0;
-        c_minus = 0;
+    }
 
+    c=0;
+    c_minus = 0;
 
-        for(int i=sizeBoard-1; i>-1; i--)
+    if ( (x == 0 && y == 3) || (x == 1 && y == 2 ) || (x == 2 && y == 1) || (x == 3 && y == 0))
+    {
+        for(int i=0; i<sizeBoard; i++)
         {
-            if (b[sizeBoard-1-i][i] == player)
-                c++;
+            if (b[i][sizeBoard-1-i] == player)
 
-            if (b[i][i] == -1 * player)
+            if (b[i][sizeBoard-1-i] == -1 * player)
                 c_minus++;
         }
 
-        if (c == 4)
+        if (c == 3)
         {
             val += 100;
         }
@@ -606,7 +642,6 @@ int heuristic(int b[][4], int sizeBoard, int x, int y, int player)
         c = 0;
         c_minus = 0;
     }
-
 
     return val;
 }
